@@ -1,0 +1,123 @@
+/myapp
+├── api
+│   ├── python
+│   │   ├── requirements.txt
+│   │   └── data_processor.py
+│   └── php
+│       ├── config.yml
+│       ├── login.php
+│       ├── auth.php
+│       ├── dashboard.php
+│       └── logout.php
+├── frontend
+│   ├── package.json
+│   ├── build.js
+│   └── public
+│       ├── index.html
+│       └── style.css
+└── scripts
+    └── process.sh
+install dipendensi 
+sudo apt install php8.2 php8.2-curl python3-pip nodejs jq
+pip3 install pyyaml
+php login system 
+<?php
+session_start();
+
+// Load config from YAML
+$config = yaml_parse_file('config.yml');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    
+    // Simple authentication (replace with database check)
+    if ($username === $config['auth']['user'] && password_verify($password, $config['auth']['hash'])) {
+        $_SESSION['user'] = $username;
+        setcookie('session_token', session_id(), time() + 3600, '/');
+        header('Location: dashboard.php');
+        exit;
+    } else {
+        header('Location: login.php?error=1');
+        exit;
+    }
+}
+?>
+python3 yaml  prosesor 
+import yaml
+import json
+
+with open("../php/config.yml") as f:
+    config = yaml.safe_load(f)
+
+def process_data(data):
+    result = {
+        "status": "processed",
+        "original": data,
+        "config": config['api_settings']
+    }
+    return json.dumps(result)
+
+if __name__ == "__main__":
+    print(process_data({"sample": "data"}))
+node js
+const fs = require('fs');
+const { execSync } = require('child_process');
+
+// Process config using jq
+execSync("jq '.api_endpoint = \"https://api.example.com\"' frontend/public/config.json > frontend/public/config.tmp");
+fs.renameSync('frontend/public/config.tmp', 'frontend/public/config.json');
+bash script 
+#!/bin/bash
+
+# Process JSON with jq
+curl -s https://api.example.com/data | jq '.results | map({name: .username, id: .id})' > processed.json
+
+# Call Python script
+python3 api/python/data_processor.py processed.json
+html/cookies 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Integrated App</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="login-form">
+        <form action="/api/php/auth.php" method="post">
+            <input type="text" name="username" placeholder="Username">
+            <input type="password" name="password" placeholder="Password">
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    
+    <script>
+    // Check cookies
+    if (document.cookie.includes('session_token')) {
+        fetch('/api/php/dashboard.php')
+            .then(response => response.text())
+            .then(data => {
+                document.body.innerHTML = data;
+            });
+    }
+    </script>
+</body>
+</html>
+config YAML
+auth:
+  user: admin
+  hash: $2y$10$S3cr3tH4sh.12345678901234567890
+api_settings:
+  endpoint: https://api.example.com
+  timeout: 30
+php server 
+cd api/php
+php -S localhost:8000
+jalan nodejs bluid 
+cd frontend
+npm install
+node build.js
+example 
+python3 api/python/data_processor.py
+chmod +x scripts/process.sh
+./scripts/process.sh
