@@ -1,0 +1,5 @@
+sudo apt install php8.2 php8.2-curl python3-pip nodejs jq
+pip3 install pyyaml
+php login system 
+<?php
+session_start();
