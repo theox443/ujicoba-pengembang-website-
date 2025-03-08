@@ -1,0 +1,19 @@
+// Load config from YAML
+$config = yaml_parse_file('config.yml');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    
+    // Simple authentication (replace with database check)
+    if ($username === $config['auth']['user'] && password_verify($password, $config['auth']['hash'])) {
+        $_SESSION['user'] = $username;
+        setcookie('session_token', session_id(), time() + 3600, '/');
+        header('Location: dashboard.php');
+        exit;
+    } else {
+        header('Location: login.php?error=1');
+        exit;
+    }
+}
+?>
