@@ -1,0 +1,19 @@
+myapp
+├── api
+│   ├── python
+│   │   ├── requirements.txt
+│   │   └── data_processor.py
+│   └── php
+│       ├── config.yml
+│       ├── login.php
+│       ├── auth.php
+│       ├── dashboard.php
+│       └── logout.php
+├── frontend
+│   ├── package.json
+│   ├── build.js
+│   └── public
+│       ├── index.html
+│       └── style.css
+└── scripts
+    └── process.sh
